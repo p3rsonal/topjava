@@ -1,47 +1,38 @@
 package ru.javawebinar.topjava.util;
 
-import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealTo;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import ru.javawebinar.topjava.model.UserMeal;
+import ru.javawebinar.topjava.model.UserMealWithExcess;
 
 public class MealsUtil {
-    public static void main(String[] args) {
-        List<Meal> meals = Arrays.asList(
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
-                new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
-        );
 
-        List<MealTo> mealsTo = filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
-        mealsTo.forEach(System.out::println);
-    }
+    private static final Integer CALORIES_LIMIT = 2000;
 
-    public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
-                .collect(
-                        Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
-//                      Collectors.toMap(Meal::getDate, Meal::getCalories, Integer::sum)
-                );
+    public static List<UserMealWithExcess> getMealsWithExcessFiltered(List<UserMeal> userMeals, LocalTime startTime, LocalTime endTime) {
+        Map<LocalDate, Integer> caloriesSumByDate = userMeals.stream()
+                .collect(Collectors.groupingBy(UserMeal::getDate, Collectors.summingInt(UserMeal::getCalories)));
 
-        return meals.stream()
+        return userMeals.stream()
                 .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
-                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
+                .map(meal -> createUserMealWithExcess(meal, caloriesSumByDate.get(meal.getDate()) > CALORIES_LIMIT))
                 .collect(Collectors.toList());
     }
 
-    private static MealTo createTo(Meal meal, boolean excess) {
-        return new MealTo(meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+    public static List<UserMealWithExcess> getMealsWithExcess(Collection<UserMeal> userMeals) {
+        Map<LocalDate, Integer> caloriesSumByDate = userMeals.stream()
+                .collect(Collectors.groupingBy(UserMeal::getDate, Collectors.summingInt(UserMeal::getCalories)));
+
+        return userMeals.stream()
+                .map(meal -> createUserMealWithExcess(meal, caloriesSumByDate.get(meal.getDate()) > CALORIES_LIMIT))
+                .collect(Collectors.toList());
+    }
+
+    private static UserMealWithExcess createUserMealWithExcess(UserMeal userMeal, boolean excess) {
+        return new UserMealWithExcess(userMeal.getId(), userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), excess);
     }
 }
