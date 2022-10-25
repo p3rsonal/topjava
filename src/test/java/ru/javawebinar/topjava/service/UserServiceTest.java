@@ -1,5 +1,16 @@
 package ru.javawebinar.topjava.service;
 
+import static org.junit.Assert.assertThrows;
+import static ru.javawebinar.topjava.utils.CommonTestData.NOT_FOUND;
+import static ru.javawebinar.topjava.utils.CommonTestData.USER_ID;
+import static ru.javawebinar.topjava.utils.UserTestData.admin;
+import static ru.javawebinar.topjava.utils.UserTestData.assertMatch;
+import static ru.javawebinar.topjava.utils.UserTestData.getNew;
+import static ru.javawebinar.topjava.utils.UserTestData.getUpdated;
+import static ru.javawebinar.topjava.utils.UserTestData.guest;
+import static ru.javawebinar.topjava.utils.UserTestData.user;
+
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -9,20 +20,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.utils.UserTestData;
 
-import java.util.List;
-
-import static org.junit.Assert.assertThrows;
-import static ru.javawebinar.topjava.UserTestData.*;
-
-@ContextConfiguration({
-        "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
-})
+@ContextConfiguration({"classpath:spring/spring-app.xml"})
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class UserServiceTest {
