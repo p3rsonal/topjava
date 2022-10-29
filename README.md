@@ -1,0 +1,2 @@
+# topjava
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a7886d379b144031ac9d756f71b361c0)](https://app.codacy.com/gh/p3rsonal/topjava?utm_source=github.com&utm_medium=referral&utm_content=p3rsonal/topjava&utm_campaign=Badge_Grade_Settings)
