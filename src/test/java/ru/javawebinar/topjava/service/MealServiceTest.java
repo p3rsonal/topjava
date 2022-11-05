@@ -1,7 +1,31 @@
 package ru.javawebinar.topjava.service;
 
+import static org.junit.Assert.assertThrows;
+import static org.slf4j.LoggerFactory.getLogger;
+import static ru.javawebinar.topjava.MealTestData.ADMIN_MEAL_ID;
+import static ru.javawebinar.topjava.MealTestData.MEAL1_ID;
+import static ru.javawebinar.topjava.MealTestData.MEAL_MATCHER;
+import static ru.javawebinar.topjava.MealTestData.NOT_FOUND;
+import static ru.javawebinar.topjava.MealTestData.adminMeal1;
+import static ru.javawebinar.topjava.MealTestData.getNew;
+import static ru.javawebinar.topjava.MealTestData.getUpdated;
+import static ru.javawebinar.topjava.MealTestData.meal1;
+import static ru.javawebinar.topjava.MealTestData.meal2;
+import static ru.javawebinar.topjava.MealTestData.meal3;
+import static ru.javawebinar.topjava.MealTestData.meals;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.USER_ID;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.concurrent.TimeUnit;
+import org.junit.AfterClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -11,24 +35,39 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.time.LocalDate;
-import java.time.Month;
-
-import static org.junit.Assert.assertThrows;
-import static ru.javawebinar.topjava.MealTestData.*;
-import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
-import static ru.javawebinar.topjava.UserTestData.USER_ID;
-
 @ContextConfiguration({
-        "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
+    "classpath:spring/spring-app.xml",
+    "classpath:spring/spring-db.xml"
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
 
+    private static final Logger log = getLogger(MealServiceTest.class);
+    private static final StringBuilder results = new StringBuilder();
+
+    @Rule
+    public final Stopwatch stopwatch = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            String result = String.format("\n%-25s %7d", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            results.append(result);
+            log.info(result + "ms\n");
+        }
+    };
+
     @Autowired
     private MealService service;
+
+    @AfterClass
+    public static void printResult() {
+        log.info("\n----------------------------------" +
+                 "\nTest                  Duration, ms" +
+                 "\n----------------------------------" +
+                 results +
+                 "\n----------------------------");
+    }
+
 
     @Test
     public void delete() {
@@ -59,7 +98,7 @@ public class MealServiceTest {
     @Test
     public void duplicateDateTimeCreate() {
         assertThrows(DataAccessException.class, () ->
-                service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100), USER_ID));
+            service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100), USER_ID));
     }
 
     @Test
@@ -99,9 +138,9 @@ public class MealServiceTest {
     @Test
     public void getBetweenInclusive() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(
-                        LocalDate.of(2020, Month.JANUARY, 30),
-                        LocalDate.of(2020, Month.JANUARY, 30), USER_ID),
-                meal3, meal2, meal1);
+                LocalDate.of(2020, Month.JANUARY, 30),
+                LocalDate.of(2020, Month.JANUARY, 30), USER_ID),
+            meal3, meal2, meal1);
     }
 
     @Test
