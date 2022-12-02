@@ -1,15 +1,16 @@
 package ru.javawebinar.topjava.util;
 
-import org.springframework.lang.Nullable;
-import org.springframework.util.StringUtils;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
 public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     // DB doesn't support LocalDate.MIN/MAX
     private static final LocalDateTime MIN_DATE = LocalDateTime.of(1, 1, 1, 0, 0);
@@ -34,9 +35,16 @@ public class DateTimeUtil {
     LocalDate parseLocalDate(@Nullable String str) {
         return StringUtils.hasLength(str) ? LocalDate.parse(str) : null;
     }
+    public static String parseLocalDateToString(@Nullable LocalDate ldt) {
+        return ldt != null ? ldt.format(DATE_FORMATTER) : "";
+    }
 
     public static @Nullable
     LocalTime parseLocalTime(@Nullable String str) {
         return StringUtils.hasLength(str) ? LocalTime.parse(str) : null;
+    }
+
+    public static String parseLocalTimeToString(@Nullable LocalTime lt) {
+        return lt != null ? lt.format(TIME_FORMATTER) : "";
     }
 }
