@@ -5,6 +5,16 @@ const ctx = {
     ajaxUrl: userAjaxUrl
 };
 
+function changeStatus(id, enabled) {
+    $.ajax({
+        type: "PATCH",
+        url: userAjaxUrl + id + "/status?enabled=" + enabled,
+    }).done(function () {
+        updateTable();
+        successNoty("Status changed");
+    });
+}
+
 // $(document).ready(function () {
 $(function () {
     makeEditable(

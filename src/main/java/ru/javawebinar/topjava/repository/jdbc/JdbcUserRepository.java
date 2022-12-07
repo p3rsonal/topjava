@@ -120,4 +120,9 @@ public class JdbcUserRepository implements UserRepository {
         }
         return u;
     }
+
+    @Override
+    public boolean changeStatus(int id, boolean enabled) {
+        return false;
+    }
 }

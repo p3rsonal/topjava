@@ -1,16 +1,15 @@
 package ru.javawebinar.topjava.service;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
+
+import java.util.List;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
-
-import java.util.List;
-
-import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
-import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class UserService {
@@ -54,5 +53,10 @@ public class UserService {
 
     public User getWithMeals(int id) {
         return checkNotFoundWithId(repository.getWithMeals(id), id);
+    }
+
+    @CacheEvict(value = "users", allEntries = true)
+    public void changeStatus(int id, boolean enabled) {
+        repository.changeStatus(id, enabled);
     }
 }

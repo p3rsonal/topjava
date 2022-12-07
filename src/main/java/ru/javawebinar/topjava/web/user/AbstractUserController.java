@@ -52,4 +52,9 @@ public abstract class AbstractUserController {
         log.info("getWithMeals {}", id);
         return service.getWithMeals(id);
     }
+
+    public void changeStatus(int id, boolean enabled) {
+        log.info("changeStatus {}", id);
+        service.changeStatus(id,enabled);
+    }
 }
