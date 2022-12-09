@@ -1,5 +1,8 @@
 package ru.javawebinar.topjava;
 
+import static ru.javawebinar.topjava.TestUtil.mockAuthorize;
+import static ru.javawebinar.topjava.UserTestData.user;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
@@ -21,6 +24,8 @@ public class SpringMain {
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
             System.out.println();
+
+            mockAuthorize(user);
 
             MealRestController mealController = appCtx.getBean(MealRestController.class);
             List<MealTo> filteredMealsWithExcess =
