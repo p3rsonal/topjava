@@ -1,6 +1,6 @@
 package ru.javawebinar.topjava.model;
 
-import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
+import static ru.javawebinar.topjava.util.UserUtil.DEFAULT_CALORIES_PER_DAY;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.Arrays;
