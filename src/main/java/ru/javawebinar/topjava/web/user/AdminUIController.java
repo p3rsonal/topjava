@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.web.user;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.processBindingErrors;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -45,10 +47,7 @@ public class AdminUIController extends AbstractUserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo, BindingResult result) {
         if (result.hasErrors()) {
-            String errorFieldsMsg = result.getFieldErrors().stream()
-                    .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
-                    .collect(Collectors.joining("<br>"));
-            return ResponseEntity.unprocessableEntity().body(errorFieldsMsg);
+            return processBindingErrors(result);
         }
         if (userTo.isNew()) {
             super.create(userTo);

@@ -32,11 +32,21 @@ public class MealsUtil {
 
         return meals.stream()
                 .filter(filter)
-                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
+                .map(meal -> asTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .toList();
     }
 
-    public static MealTo createTo(Meal meal, boolean excess) {
+    public static MealTo asTo(Meal meal, boolean excess) {
         return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+    }
+
+    public static Meal updateFromTo(MealTo mealTo) {
+        Meal meal = createNewFromTo(mealTo);
+        meal.setId(mealTo.getId());
+        return meal;
+    }
+
+    public static Meal createNewFromTo(MealTo mealTo) {
+        return new Meal(null, mealTo.getDateTime(), mealTo.getDescription(), mealTo.getCalories());
     }
 }
